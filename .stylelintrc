@@ -1,0 +1,24 @@
+{
+  "processors": [],
+  "extends": [
+    "stylelint-config-standard"
+  ],
+  "defaultSeverity": "warning",
+  "ignoreFiles": [
+    "node_modules/**",
+    "**/*.tsx",
+    "**/*.ts",
+    "**/*.js",
+    "**/*.md",
+    "**/*.json"
+  ],
+  // "customSyntax": "postcss-less",
+  "rules": {
+    "selector-class-pattern": "[a-zA-Z\\-]+",
+    "block-no-empty": true,
+    "no-eol-whitespace": true,
+    "declaration-empty-line-before": "never",
+    "rule-empty-line-before": "never",
+    "declaration-block-trailing-semicolon": "always"
+  }
+}
