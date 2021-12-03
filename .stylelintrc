@@ -12,7 +12,7 @@
     "**/*.md",
     "**/*.json"
   ],
-  // "customSyntax": "postcss-less",
+  "customSyntax": "postcss-less",
   "rules": {
     "selector-class-pattern": "[a-zA-Z\\-]+",
     "block-no-empty": true,
