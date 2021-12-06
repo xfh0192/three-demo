@@ -24,17 +24,16 @@ export default class Css3d extends Component<Css3dProps, Css3dState> {
     }
   }
   componentDidMount = () => {
-    this.init()
-    this.handleAnimate()
+    // this.init()
+    // this.handleAnimate()
+    this.addAxesHelper()
   }
 
   init = () => {
-    let { objects, targets, renderer, controls } = _.cloneDeep(this.state)
+    let { scene, objects, targets, renderer, controls } = this.state
 
     let camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000)
     camera.position.z = 3000
-
-    let scene = new THREE.Scene()
 
     // table
     for (let i = 0; i < table.length; i += 5) {
@@ -87,8 +86,17 @@ export default class Css3d extends Component<Css3dProps, Css3dState> {
     controls.maxDistance = 6000;
     controls.addEventListener('change', this.handleRender);
 
+    // other helper
+    // this.addAxesHelper()
+
     this.setState({ objects, targets, scene, renderer, controls, camera })
     this.transform(targets.table, 2000);
+  }
+
+  addAxesHelper = () => {
+    var axesHelper = new THREE.AxesHelper(100);
+    this.state.scene.add(axesHelper)
+    this.handleRender()
   }
 
   handleTransform = (type = 'table') => {
@@ -102,10 +110,8 @@ export default class Css3d extends Component<Css3dProps, Css3dState> {
 
     let { objects } = this.state
     for (let i = 0; i < objects.length; i++) {
-
       const object = objects[i];
       const target = targets[i];
-
       new TWEEN.Tween(object.position)
         .to({ x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration)
         .easing(TWEEN.Easing.Exponential.InOut)
@@ -117,26 +123,19 @@ export default class Css3d extends Component<Css3dProps, Css3dState> {
         .start();
 
     }
-
     new TWEEN.Tween(this)
       .to({}, duration * 2)
       .onUpdate(this.handleRender)
       .start();
-
-
   }
   handleRender = () => {
     const { scene, camera } = this.state
     this.state.renderer.render(scene, camera);
   }
   handleAnimate = () => {
-
     requestAnimationFrame(this.handleAnimate);
-
     TWEEN.update();
-
     this.state.controls.update();
-
   }
 
   render() {
