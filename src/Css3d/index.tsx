@@ -5,28 +5,31 @@ import './index.less'
 
 import * as THREE from 'three'
 
-import { Css3dState, Css3dProps } from '../types/Css3d'
+import { Css3dState, Css3dProps, Table, Targets } from '../types/Css3d'
+import * as TWEEN from '@tweenjs/tween.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
-
+import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js';
 
 export default class Css3d extends Component<Css3dProps, Css3dState> {
   constructor(props: any) {
     super(props)
+    let camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000)
     this.state = {
       objects: [],
-      // targets: { table: [], sphere: [], helix: [], grid: [] },
-      // camera: null,
-      // scene: null,
-      // renderer: null,
-      // controls: null,
+      targets: { table: [] },
+      camera,
+      scene: new THREE.Scene(),
+      renderer: new CSS3DRenderer(),
+      controls: new TrackballControls(camera, document.createElement('div')),
     }
   }
   componentDidMount = () => {
     this.init()
+    this.handleAnimate()
   }
 
   init = () => {
-    let { objects } = _.cloneDeep(this.state)
+    let { objects, targets, renderer, controls } = _.cloneDeep(this.state)
 
     let camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000)
     camera.position.z = 3000
@@ -62,53 +65,86 @@ export default class Css3d extends Component<Css3dProps, Css3dState> {
 
       objects.push(objectCSS);
 
-      //     //
+      //
 
-      //     const object = new THREE.Object3D();
-      //     object.position.x = (table[i + 3] * 140) - 1330;
-      //     object.position.y = - (table[i + 4] * 180) + 990;
+      const object = new THREE.Object3D();
+      object.position.x = ((table[i + 3] as number) * 140) - 1330;
+      object.position.y = - ((table[i + 4] as number) * 180) + 990;
 
-      //     targets.table.push(object);
+      targets.table.push(object);
     }
 
-    //   //
+    //
 
-    //   renderer = new CSS3DRenderer();
-    //   renderer.setSize(window.innerWidth, window.innerHeight);
-    //   document.getElementById('container').appendChild(renderer.domElement);
+    renderer = new CSS3DRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('container')!.appendChild(renderer.domElement);
 
-    //   //
+    //
 
-    //   controls = new TrackballControls(camera, renderer.domElement);
-    //   controls.minDistance = 500;
-    //   controls.maxDistance = 6000;
-    //   controls.addEventListener('change', this.handleRender);
+    controls = new TrackballControls(camera, renderer.domElement);
+    controls.minDistance = 500;
+    controls.maxDistance = 6000;
+    controls.addEventListener('change', this.handleRender);
 
-    //   this.setState({ objects, targets, renderer })
-    //   this.transform(targets.table, 2000);
-
+    this.setState({ objects, targets, scene, renderer, controls, camera })
+    this.transform(targets.table, 2000);
   }
 
-  // handleTransform = (type = 'table') => {
-  //   if (type === 'table') {
-  //     this.transform(this.state.targets.table, 2000)
-  //   }
-  // }
+  handleTransform = (type = 'table') => {
+    if (type === 'table') {
+      this.transform(this.state.targets.table, 2000)
+    }
+  }
 
-  // transform = (data, time = 2000) => {
+  transform = (targets: THREE.Object3D[], duration = 2000) => {
+    TWEEN.removeAll();
 
-  // }
-  // handleRender = () => {
-  //   const { scene, camera } = this.state
-  //   this.state.renderer.render(scene, camera);
-  // }
+    let { objects } = this.state
+    for (let i = 0; i < objects.length; i++) {
+
+      const object = objects[i];
+      const target = targets[i];
+
+      new TWEEN.Tween(object.position)
+        .to({ x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration)
+        .easing(TWEEN.Easing.Exponential.InOut)
+        .start();
+
+      new TWEEN.Tween(object.rotation)
+        .to({ x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration)
+        .easing(TWEEN.Easing.Exponential.InOut)
+        .start();
+
+    }
+
+    new TWEEN.Tween(this)
+      .to({}, duration * 2)
+      .onUpdate(this.handleRender)
+      .start();
+
+
+  }
+  handleRender = () => {
+    const { scene, camera } = this.state
+    this.state.renderer.render(scene, camera);
+  }
+  handleAnimate = () => {
+
+    requestAnimationFrame(this.handleAnimate);
+
+    TWEEN.update();
+
+    this.state.controls.update();
+
+  }
 
   render() {
     return (
       <div className='css3d'>
         <div id="container"></div>
         <div id="menu">
-          {/* <button id="table" onClick={this.handleTransform.bind(this, 'table')}>TABLE</button> */}
+          <button id="table" onClick={this.handleTransform.bind(this, 'table')}>TABLE</button>
           <button id="sphere">SPHERE</button>
           <button id="helix">HELIX</button>
           <button id="grid">GRID</button>
@@ -118,7 +154,7 @@ export default class Css3d extends Component<Css3dProps, Css3dState> {
   }
 }
 
-const table = [
+const table: Table = [
   "H", "Hydrogen", "1.00794", 1, 1,
   "He", "Helium", "4.002602", 18, 1,
   "Li", "Lithium", "6.941", 1, 2,
