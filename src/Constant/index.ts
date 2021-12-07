@@ -1,6 +1,7 @@
 /// <reference path='../types/Constant.d.ts'/>
 
 import Dashboard from '../Application/Dashboard'
+import Axes from '../Axes'
 import Css3d from '../Css3d'
 
 export const MenuList: Constant.MenuList = [{
@@ -13,4 +14,9 @@ export const MenuList: Constant.MenuList = [{
   value: 'Css3d',
   path: '/Css3d',
   component: Css3d,
+}, {
+  title: 'Axes',
+  value: 'Axes',
+  path: '/Axes',
+  component: Axes,
 }]

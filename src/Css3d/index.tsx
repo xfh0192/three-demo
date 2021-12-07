@@ -24,9 +24,8 @@ export default class Css3d extends Component<Css3dProps, Css3dState> {
     }
   }
   componentDidMount = () => {
-    // this.init()
-    // this.handleAnimate()
-    this.addAxesHelper()
+    this.init()
+    this.handleAnimate()
   }
 
   init = () => {
@@ -86,17 +85,8 @@ export default class Css3d extends Component<Css3dProps, Css3dState> {
     controls.maxDistance = 6000;
     controls.addEventListener('change', this.handleRender);
 
-    // other helper
-    // this.addAxesHelper()
-
     this.setState({ objects, targets, scene, renderer, controls, camera })
     this.transform(targets.table, 2000);
-  }
-
-  addAxesHelper = () => {
-    var axesHelper = new THREE.AxesHelper(100);
-    this.state.scene.add(axesHelper)
-    this.handleRender()
   }
 
   handleTransform = (type = 'table') => {
