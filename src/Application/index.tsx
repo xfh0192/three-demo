@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ReactDom from 'react-dom'
 import Css3d from '../Css3d'
-import AxesHelper from '../AxesHelper';
+import Axes from '../Axes';
 
 export default class Application extends Component {
   click = () => {
@@ -13,7 +13,7 @@ export default class Application extends Component {
         Application
         <button onClick={this.click}>button</button>
         {/* <Css3d /> */}
-        <AxesHelper />
+        <Axes />
       </div>
     )
   }

@@ -3,7 +3,7 @@ import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRe
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js';
 
 export interface Css3dProps {
-  [string]: any
+  [propName: string]: any
 }
 export interface Css3dState {
   objects: Array<CSS3DObject>,
